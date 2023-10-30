@@ -265,7 +265,7 @@ class DataCleaning:
         # Clean product price
         df['product_price'] = df['product_price'].apply(lambda x: str(x).replace('£',''))
         df['product_price'] = pd.to_numeric(df.product_price, errors='coerce')
-        # df = df.rename(columns={'product_price':'product_price(£)'})
+        # df = df.rename(columns={'product_price':'product_price'})
 
         # Clean category
         # The invalid entries have all value_counts 1.
