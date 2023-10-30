@@ -3,3 +3,5 @@ testNotebook.ipynb
 local_db_creds.yaml
 api_keys.yaml
 testFinalResults.ipynb
+card_details.pdf
+stores_data.csv

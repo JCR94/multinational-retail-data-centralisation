@@ -1,23 +1,63 @@
-import pandas as pd
 import numpy as np
+import pandas as pd
+
 import re
 import yaml
+
 from dateutil.parser import parse
 from datetime import datetime
 
 
 class DataCleaning:
-    
-    # cleans the data from db_creds.yaml
-    def clean_user_data(self, user_data_df: pd.DataFrame):
+    '''
+    A class that handles all the data cleaning for different dataframes.
 
+    Methods:
+    -------
+    clean_user_data(user_data_df: pd.DataFrame)
+        Cleans the user_data and returns the clean data as a dataframe.
+    clean_card_data(card_data_df: pd.DataFrame)
+        Cleans the card_data and returns the clean data as a dataframe.
+    clean_store_data(store_data_df: pd.DataFrame)
+        Cleans the store_data and returns the clean data as a dataframe.
+    convert_product_weights(product_data_df: pd.DataFrame)
+        Converts the weights of all the products in a dataframe into kg and returns the converted dataframe.
+    clean_products_data(product_data_df: pd.DataFrame)
+        Cleans the product_data and returns the clean data as a dataframe.
+    clean_orders_data(order_data_df: pd.DataFrame)
+        Cleans the order_data and returns the clean data as a dataframe.
+    clean_events_data(event_data_df: pd.DataFrame)
+        Cleans the event_data and returns the clean data as a dataframe.
+
+    Static Methods:
+    safe_parse(date_string: str)
+        Safely parses a date avoiding ValueError. If the string contains a valid date, it will return it as a parsed date. Otherwise, if
+        will return np.nan (instead of throwing a ValueError).
+    '''
+    
+    def clean_user_data(self, user_data_df: pd.DataFrame):
+        '''
+        Cleans the user data.
+
+        Parameters
+        ----------
+        user_data_df : pd.DataFrame
+            The user data to be cleaned.
+            The data must contain the columns: first_name, last_name, date_of_birth, company, email_address, address, country, country_code, phone_number, join_date, user_uuid.
+            
+        Returns
+        -------
+        df: pd.Dataframe
+            The cleaned user data.
+        '''
+        
         df = user_data_df.copy()
 
         if 'index' in df.columns:
             df = df.set_index('index')
 
         # apply .astype('string') to several columns
-        df.last_name, df.company, df.email_address, df.address, df.country, df.country_code = map(lambda x: x.astype('string'), (df.last_name, df.company, df.email_address, df.address, df.country, df.country_code))
+        df.first_name, df.last_name, df.company, df.email_address, df.address, df.country, df.country_code = map(lambda x: x.astype('string'), (df.first_name, df.last_name, df.company, df.email_address, df.address, df.country, df.country_code))
 
         # clean dates: some dates were null, some were a string of alphanumerical characters, and many were valid but in mixed formats
         # The valid dates returned a proper date when passed to `parse`, the rest threw a ValueError. So we define safe_parse to deal with this.
@@ -38,6 +78,20 @@ class DataCleaning:
         return df
     
     def clean_card_data(self, card_data_df: pd.DataFrame):
+        '''
+        Cleans the card data.
+
+        Parameters
+        ----------
+        card_data_df : pd.DataFrame
+            The card data to be cleaned.
+            The dataframe must contain the columns: card_number, expiry_date, card_provider, date_payment_confirmed.
+            
+        Returns
+        -------
+        df: pd.Dataframe
+            The cleaned card data.
+        '''
 
         df = card_data_df.copy()
 
@@ -56,8 +110,8 @@ class DataCleaning:
         # Clean card_provider
         # value_counts reveals that the invalid card providers all have less than 12 occurrences, so we just set those to np.nan
         card_provider_count = df['card_provider'].value_counts() # so we don't have to call value_coutns on this column multiple times
-        mask = df['card_provider'].apply(lambda x: card_provider_count[x] > 12)
-        df.loc[~mask, 'card_provider'] = np.nan
+        valid_card_provider_mask = df['card_provider'].apply(lambda x: card_provider_count[x] > 12)
+        df.loc[~valid_card_provider_mask, 'card_provider'] = np.nan
         # Finally, cast as string
         df.card_provider = df.card_provider.astype('string')
             
@@ -94,6 +148,20 @@ class DataCleaning:
         return df
     
     def clean_store_data(self, store_data_df: pd.DataFrame):
+        '''
+        Cleans the store data.
+
+        Parameters
+        ----------
+        store_data_df : pd.DataFrame
+            The store data to be cleaned.
+            The dataframe must contain the columns: store_code, store_type, staff_numbers, locality, address, country_code, continent, longitude, latitude, opening_date.
+            
+        Returns
+        -------
+        df: pd.Dataframe
+            The cleaned store data.
+        '''
 
         df = store_data_df.copy()
 
@@ -102,8 +170,8 @@ class DataCleaning:
             df.drop(columns=['lat'], inplace=True)
         # Clean store type
         # The valid store types all appear more than 4 times, except for 'Web Portal'.
-        mask = df['store_type'].apply(lambda x: df['store_type'].value_counts()[x] < 4 and x != 'Web Portal')
-        df.loc[mask, 'store_type'] = np.nan
+        invalid_store_mask = df['store_type'].apply(lambda x: df['store_type'].value_counts()[x] < 4 and x != 'Web Portal')
+        df.loc[invalid_store_mask, 'store_type'] = np.nan
 
         # We have to be careful with cleaning the remaining columns, as the Wep Portal has a lot of n/a values, but we don't want them to be dropped.
         # Since all stores with store types np.nan have otherwise invalid entries, we may as well drop them now, which facilitates the rest.
@@ -137,11 +205,41 @@ class DataCleaning:
         return df
     
     def convert_product_weights(self, product_data_df: pd.DataFrame):
+        '''
+        Converts the weights of all the products in a dataframe into kg and returns the converted dataframe.
+        The accepted units are kg, g, ml, oz, and the method also accepts a single use of 'x' as a multiplier (e.g. 12x100g is converted to 1.2).
+
+        Parameters
+        ----------
+        event_data_df : pd.DataFrame
+            The dataframe containing the columns. The dataframe must contain a column named 'weight'.
+            
+        Returns
+        -------
+        df: pd.Dataframe
+            The dataframe with all weights converted.
+        '''
+        
         df = product_data_df.copy()
 
         # The data contains the units kg, g, ml, and oz. (1 oz = 28.3495g)
         # some of the data contains entries such as '12 x 100g', which need to be converted as well.
         def single_conversion(entry: str):
+            '''
+            Converts a single weight entry into kg.
+            The accepted units are kg, g, ml, oz, and the method also accepts a single use of 'x' as a multiplier (e.g. 12x100g is converted to 1.2).
+            If the entry does not fit into that format, the method returns np.nan instead.
+            
+            Parameters
+            ----------
+            entry: str
+                A string representing a weight.
+            
+            Return
+            ------
+            float:
+                The weight in kg or np.nan if the entry was invalid.
+            '''
             entry = str(entry).replace(' ','')
             if 'x' in entry:
                 temp = entry.split('x')
@@ -149,11 +247,11 @@ class DataCleaning:
             elif 'kg' in entry:
                 return float(entry.replace('kg',''))
             elif 'g' in entry:
-                return float(entry.replace('g',''))
+                return float(entry.replace('g',''))*1000
             elif 'ml' in entry:
-                return entry.replace('ml','')
+                return float(entry.replace('ml',''))*1000
             elif 'oz' in entry:
-                return entry.replace('oz','')
+                return float(entry.replace('oz',''))*0.0283495
             else:
                 return np.nan
         
@@ -163,6 +261,21 @@ class DataCleaning:
         return df
     
     def clean_products_data(self, product_data_df: pd.DataFrame):
+        '''
+        Cleans the product data.
+
+        Parameters
+        ----------
+        product_card_df : pd.DataFrame
+            The product data to be cleaned.
+            The dataframe must contain the columns: product_name, product_price, weight, category, EAN, date_added, uuid, removed, product_code.
+            
+        Returns
+        -------
+        df: pd.Dataframe
+            The cleaned product data.
+        '''
+
         df = product_data_df.copy()
         df = self.convert_product_weights(df)
 
@@ -190,16 +303,16 @@ class DataCleaning:
 
         # Clean uuid
         # uuids are of form xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx where x is alphanumerical
-        mask = df['uuid'].apply(lambda x: bool(re.search('[a-zA-Z\d]{8}-[a-zA-Z\d]{4}-[a-zA-Z\d]{4}-[a-zA-Z\d]{4}-[a-zA-Z\d]{12}', str(x))))
-        df.loc[~mask, 'uuid'] = np.nan
+        valid_uuid_mask = df['uuid'].apply(lambda x: bool(re.search('[a-zA-Z\d]{8}-[a-zA-Z\d]{4}-[a-zA-Z\d]{4}-[a-zA-Z\d]{4}-[a-zA-Z\d]{12}', str(x))))
+        df.loc[~valid_uuid_mask, 'uuid'] = np.nan
 
         # Clean removed
         df['removed'] = df['removed'].apply(lambda x: True if x == 'Removed' else (False if x == 'Still_avaliable' else np.nan))
 
         # Clean product code
         # All product codes have the form ld-X, where L is a letter, D a digit, and X a sequence of alphanumerical characters.
-        mask = df['product_code'].apply(lambda x: bool(re.search('[a-zA-Z]{1}[\d]{1}-[a-zA-Z\d]+', str(x))))
-        df.loc[~mask, 'product_code'] = np.nan
+        valid_product_code_mask = df['product_code'].apply(lambda x: bool(re.search('[a-zA-Z]{1}[\d]{1}-[a-zA-Z\d]+', str(x))))
+        df.loc[~valid_product_code_mask, 'product_code'] = np.nan
 
         # Now we drop all np.nans and cast the entries to the right types
         df.dropna(inplace=True)
@@ -210,6 +323,20 @@ class DataCleaning:
         return df
 
     def clean_orders_data(self, order_data_df: pd.DataFrame):
+        '''
+        Cleans the orders data.
+
+        Parameters
+        ----------
+        order_data_df : pd.DataFrame
+            The order data to be cleaned.
+            The dataframe must contain the columns: date_uuid, user_uuid, card_number, store_code, product_code, product_quantity.
+            
+        Returns
+        -------
+        df: pd.Dataframe
+            The cleaned order data.
+        '''
         df = order_data_df.copy()
 
         # Drop columns 'first_name', 'last_name', and '1'. Also drop 'index' and 'level_0'.
@@ -221,31 +348,46 @@ class DataCleaning:
         return df
     
     def clean_events_data(self, event_data_df: pd.DataFrame):
+        '''
+        Cleans the events data.
+
+        Parameters
+        ----------
+        event_data_df : pd.DataFrame
+            The event data to be cleaned.
+            The dataframe must contain the columns: timestamp, month, year, day, time_period, date_uuid.
+            
+        Returns
+        -------
+        df: pd.Dataframe
+            The cleaned event data.
+        '''
+
         df = event_data_df.copy()
 
         # Clean timestamp
-        mask = df['timestamp'].apply(lambda x: bool(re.search('[\d]{2}:[\d]{2}:[\d]{2}', str(x))))
-        df.loc[~mask, 'timestamp'] = np.nan
+        valid_time_stamp_mask = df['timestamp'].apply(lambda x: bool(re.search('[\d]{2}:[\d]{2}:[\d]{2}', str(x))))
+        df.loc[~valid_time_stamp_mask, 'timestamp'] = np.nan
 
         # Clean day
-        mask = df['day'].apply(lambda x: bool(re.search('[\d]{1,2}', str(x))))
-        df.loc[~mask, 'day'] = np.nan
+        valid_day_mask = df['day'].apply(lambda x: bool(re.search('[\d]{1,2}', str(x))))
+        df.loc[~valid_day_mask, 'day'] = np.nan
 
         # Clean month
-        mask = df['month'].apply(lambda x: bool(re.search('[\d]{1,2}', str(x))))
-        df.loc[~mask, 'month'] = np.nan
+        valid_month_mask = df['month'].apply(lambda x: bool(re.search('[\d]{1,2}', str(x))))
+        df.loc[~valid_month_mask, 'month'] = np.nan
 
         # Clean year
-        mask = df['year'].apply(lambda x: bool(re.search('[\d]{4}', str(x))))
-        df.loc[~mask, 'year'] = np.nan
+        valid_year_mask = df['year'].apply(lambda x: bool(re.search('[\d]{4}', str(x))))
+        df.loc[~valid_year_mask, 'year'] = np.nan
 
         # Clean time_period
         time_period = df['time_period'].value_counts()
         df['time_period'] = df['time_period'].apply(lambda x: x if (x in time_period.keys() and time_period[x] > 15) else np.nan)
 
         # Clean date_uuid
-        mask = df['date_uuid'].apply(lambda x: bool(re.search('[a-zA-Z\d]{8}-[a-zA-Z\d]{4}-[a-zA-Z\d]{4}-[a-zA-Z\d]{4}-[a-zA-Z\d]{12}', str(x))))
-        df.loc[~mask, 'date_uuid'] = np.nan
+        valid_date_uuid_mask = df['date_uuid'].apply(lambda x: bool(re.search('[a-zA-Z\d]{8}-[a-zA-Z\d]{4}-[a-zA-Z\d]{4}-[a-zA-Z\d]{4}-[a-zA-Z\d]{12}', str(x))))
+        df.loc[~valid_date_uuid_mask, 'date_uuid'] = np.nan
 
         # Drop np.nan's, cast to correct types, and reset index
         df.dropna(inplace = True)
@@ -260,10 +402,23 @@ class DataCleaning:
         return df
 
     @staticmethod
-    def safe_parse(date_string):
-            try:
-                date = parse(str(date_string))
-                return date
-            except ValueError:
-                return np.nan
+    def safe_parse(date_string: str):
+        '''
+        Safely parses a date avoiding ValueError. If the string contains a valid date, it will return it as a parsed date. Otherwise, if
+        will return np.nan (instead of throwing a ValueError)
+
+        Parameters
+        ----------
+        date_string: str
+            The string containing a candidate for a date to be parsed.
+        
+        Returns
+        -------
+            The parsed date if the string contain a valid date, or np.nan otherwise.
+        '''
+        try:
+            date = parse(str(date_string))
+            return date
+        except ValueError:
+            return np.nan
         

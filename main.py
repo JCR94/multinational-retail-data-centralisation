@@ -1,9 +1,10 @@
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 from database_utils import DatabaseConnector
-from data_extraction import DataExtractor
 from data_cleaning import DataCleaning
+from data_extraction import DataExtractor
+
 
 if __name__ == '__main__':
     credentials_file = 'db_creds.yaml'
