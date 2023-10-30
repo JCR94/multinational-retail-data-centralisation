@@ -105,7 +105,6 @@ To use, follow the following steps:
 ├── data_extraction.py
 ├── database_utils.py
 ├── main.py
-├── back_card_number_lengths.yaml
 └── README.md
 
 ```
