@@ -100,12 +100,27 @@ To use, follow the following steps:
 │   ├── data_cleaning.cpython-311.pyc
 │   ├── data_extraction.cpython-311.pyc
 │   ├── database_utils.cpython-311.pyc
+├── sql_scripts
+│   ├── create_db_schema
+│   │   ├── add_foreign_keys.sql
+│   │   ├── add_primary_keys.sql
+│   │   ├── add_weight_class_dim_products.sql
+│   │   ├── cast_dim_card_details.py
+│   │   ├── cast_dim_date_times.py
+│   │   ├── cast_dim_products.py
+│   │   ├── cast_dim_store_details.py
+│   │   ├── cast_dim_users.py
+│   │   └── cast_orders_table.py
+│   └── queries
+│       ├── 
+│       ├── 
+│       ├── 
+│       └── 
 ├── .gitignore
 ├── data_cleaning.py
 ├── data_extraction.py
 ├── database_utils.py
 ├── main.py
-├── back_card_number_lengths.yaml
 └── README.md
 
 ```
