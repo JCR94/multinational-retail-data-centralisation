@@ -1,0 +1,21 @@
+VISA 16 digit:
+  - 16
+JCB 16 digit:
+  - 16
+VISA 13 digit:
+  - 13
+JCB 15 digit:
+  - 15
+VISA 19 digit:
+  - 19
+Diners Club / Carte Blanche:
+  - 14
+American Express:
+  - 15
+Maestro:
+  - 12
+  - 11
+Discover:
+  - 16
+Mastercard:
+  - 16
