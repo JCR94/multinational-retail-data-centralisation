@@ -96,6 +96,11 @@ To use, follow the following steps:
 
 ```bash
 .
+├── __pycache__
+│   ├── data_cleaning.cpython-311.pyc
+│   ├── data_extraction.cpython-311.pyc
+│   ├── database_utils.cpython-311.pyc
+├── .gitignore
 ├── data_cleaning.py
 ├── data_extraction.py
 ├── database_utils.py
