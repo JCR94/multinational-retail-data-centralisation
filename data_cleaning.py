@@ -98,14 +98,9 @@ class DataCleaning:
         # Clean expiry_date
         # A limited amount of entries are not of the format dd/dd where d is digit, and of those values none are dates, so they can be dropped.
         # The remaining dates all correspond to correct dates, i.e. the first two digits correspond to a value between 1-12.
-        # We can either keep the formay %m/%y, or the dtype datetime64. We opt for the latter.
-        def safe_expiry_date_conversion(date, format='%m/%y'):
-            try:
-                date = datetime.strptime(date, format)
-                return date
-            except ValueError:
-                return np.nan
-        df.expiry_date = df.expiry_date.apply(safe_expiry_date_conversion)
+        expiry_date_mask = df['expiry_date'].apply(lambda x : len(x) == 5 and x[2] == '/')
+        df.loc[~expiry_date_mask, 'expiry_date'] = np.nan
+        df.expiry_date = df.expiry_date.astype('string')
 
         # Clean card_provider
         # value_counts reveals that the invalid card providers all have less than 12 occurrences, so we just set those to np.nan
@@ -121,30 +116,14 @@ class DataCleaning:
         df.date_payment_confirmed = df.date_payment_confirmed.apply(self.safe_parse)
 
         # Clean card_number
-        # Some entries have ?s than when removed return a valid credit card number.
-        # For each provider, we check for number length, as some lenghts deviate from the others of the same provider.
-        # We only accept lengths that occur over 50 times. The acceptable lengths are stored in 'bank_card_number_lengths.yaml'.
-        # We can't just use pd.to_numeric because some codes are 19 digits long, which exceeds the precision of float64 numbers and thus changes some card numbers.
-        with open('bank_card_number_lengths.yaml', 'r') as stream:
-            accepted_card_number_lengths = yaml.safe_load(stream)
-        bank_card_names = list(accepted_card_number_lengths.keys())
+        # Entries with ?s return a valid credit card number after removing the ?s.
+        df['card_number'] = df['card_number'].apply(lambda x: str(x).replace('?',''))
+        card_number_mask = df['card_number'].apply(lambda x: bool(re.search(r'^\d+$', str(x))))
+        df.loc[~card_number_mask, 'card_number'] = np.nan
+        df.card_number = df.card_number.astype('string')
 
-        question_mark_replacer = lambda x: str(x).replace('?','')
-        df['card_number'] = df['card_number'].apply(question_mark_replacer)
-
-        for name in bank_card_names:
-            card_name_mask = df['card_provider'] == name
-            df_card_by_name = df[card_name_mask]
-
-            has_correct_length = lambda x : len(str(x)) in accepted_card_number_lengths[name]
-            is_numeric = lambda x : bool(re.search(r'^\d+$', str(x)))
-
-            df.loc[card_name_mask, 'card_number'] = df.loc[card_name_mask, 'card_number'].apply(lambda x: x if has_correct_length(x) and is_numeric(x) else np.nan)
-        
         # Now, we drop all NaN entries
         df.dropna(inplace = True)
-        # And we can now cast card_number to an int
-        df.card_number = df.card_number.astype('int64') # needs to specify int64, otherwise it automatically chooses int32, which isn't enough
         return df
     
     def clean_store_data(self, store_data_df: pd.DataFrame):
@@ -247,9 +226,9 @@ class DataCleaning:
             elif 'kg' in entry:
                 return float(entry.replace('kg',''))
             elif 'g' in entry:
-                return float(entry.replace('g',''))*1000
+                return float(entry.replace('g',''))/1000
             elif 'ml' in entry:
-                return float(entry.replace('ml',''))*1000
+                return float(entry.replace('ml',''))/1000
             elif 'oz' in entry:
                 return float(entry.replace('oz',''))*0.0283495
             else:
@@ -257,7 +236,7 @@ class DataCleaning:
         
         df['weight'] = df['weight'].apply(single_conversion)
         df['weight'] = pd.to_numeric(df.weight, errors='coerce')
-        df = df.rename(columns={'weight':'weight(kg)'})
+        # df = df.rename(columns={'weight':'weight(kg)'}) # not a good idea because of how conflict with sql tables.
         return df
     
     def clean_products_data(self, product_data_df: pd.DataFrame):
@@ -286,7 +265,7 @@ class DataCleaning:
         # Clean product price
         df['product_price'] = df['product_price'].apply(lambda x: str(x).replace('£',''))
         df['product_price'] = pd.to_numeric(df.product_price, errors='coerce')
-        df = df.rename(columns={'product_price':'product_price(£)'})
+        # df = df.rename(columns={'product_price':'product_price(£)'})
 
         # Clean category
         # The invalid entries have all value_counts 1.
@@ -307,7 +286,8 @@ class DataCleaning:
         df.loc[~valid_uuid_mask, 'uuid'] = np.nan
 
         # Clean removed
-        df['removed'] = df['removed'].apply(lambda x: True if x == 'Removed' else (False if x == 'Still_avaliable' else np.nan))
+        df['removed'] = df['removed'].apply(lambda x: False if x == 'Removed' else (True if x == 'Still_avaliable' else np.nan))
+        df.rename(columns={'removed':'still_available'})
 
         # Clean product code
         # All product codes have the form ld-X, where L is a letter, D a digit, and X a sequence of alphanumerical characters.
@@ -316,8 +296,7 @@ class DataCleaning:
 
         # Now we drop all np.nans and cast the entries to the right types
         df.dropna(inplace=True)
-        df.product_name, df.category, df.uuid, df.product_code = map(lambda x: x.astype('string'), (df.product_name, df.category, df.uuid, df.product_code))
-        df.EAN = df.EAN.astype('int64')
+        df.product_name, df.category, df.uuid, df.product_code, df.EAN = map(lambda x: x.astype('string'), (df.product_name, df.category, df.uuid, df.product_code, df.EAN))
         df.removed = df.removed.astype('bool')
 
         return df
