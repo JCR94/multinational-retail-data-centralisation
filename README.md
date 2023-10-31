@@ -105,17 +105,22 @@ To use, follow the following steps:
 │   │   ├── add_foreign_keys.sql
 │   │   ├── add_primary_keys.sql
 │   │   ├── add_weight_class_dim_products.sql
-│   │   ├── cast_dim_card_details.py
-│   │   ├── cast_dim_date_times.py
-│   │   ├── cast_dim_products.py
-│   │   ├── cast_dim_store_details.py
-│   │   ├── cast_dim_users.py
-│   │   └── cast_orders_table.py
+│   │   ├── cast_dim_card_details.sql
+│   │   ├── cast_dim_date_times.sql
+│   │   ├── cast_dim_products.sql
+│   │   ├── cast_dim_store_details.sql
+│   │   ├── cast_dim_users.sql
+│   │   └── cast_orders_table.sql
 │   └── queries
-│       ├── 
-│       ├── 
-│       ├── 
-│       └── 
+│       ├── average_time_between_sales_per_year.sql
+│       ├── online_vs_offline_sales.sql
+│       ├── percentage_of_sales_per_store.sql
+│       ├── staff_numbers_per_country_code.sql
+│       ├── total_no_stores_by_country_id.sql
+│       ├── total_no_stores_by_locality.sql
+│       ├── total_sales_per_month.sql
+│       ├── total_sales_per_store_type_in_germany.sql
+│       └── total_sales_per_year_and_month.sql
 ├── .gitignore
 ├── data_cleaning.py
 ├── data_extraction.py

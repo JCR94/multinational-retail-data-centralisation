@@ -297,7 +297,7 @@ class DataCleaning:
         # Now we drop all np.nans and cast the entries to the right types
         df.dropna(inplace=True)
         df.product_name, df.category, df.uuid, df.product_code, df.EAN = map(lambda x: x.astype('string'), (df.product_name, df.category, df.uuid, df.product_code, df.EAN))
-        df.removed = df.removed.astype('bool')
+        df.still_available = df.still_available.astype('bool')
 
         return df
 
