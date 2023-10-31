@@ -1,4 +1,6 @@
 yaml_files/db_creds.yaml
 yaml_files/local_db_creds.yaml
 yaml_files/api_keys.yaml
-python_scripys/__pycache__
+python_scripts/__pycache__
+sql_scripts/__pycache__
+__pycache__

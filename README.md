@@ -34,6 +34,8 @@ The project can be divided into three main components:
 
 ## Installation requirements
 
+### Modules
+
 The project requires a version of Python (preferably Python 3). If working offline, it also requires some relational database management system on your PC. We recommend using PostgreSQL through pgAdmin 4.
 
 The following packages are required (we include the version numbers in parentheses, but the exact version might not be required):
@@ -54,7 +56,7 @@ Inbuilt modules that were used but don't require explicit installation are:
 - Operator
 - DateTime
 
-## How to use
+### Files
 
 In addition to the files provided in the repo, the program requires the following YAML files:
 
@@ -94,10 +96,13 @@ In addition to the files provided in the repo, the program requires the followin
 
 These three files need to be in the yaml_files directory before executing the Python files. You may use the templates provided. Simply open them in your favorite editor, modify the details, and rename the files to remove the `_template` qualifier (e.g. rename `api_keys_template.yaml` to `api_key.yaml`).
 
-To use, follow the following steps:
+
+## How to use
+
+To use the program, follow the following steps:
 
 1. Create a database (e.g. through pgAdmin 4).
-2. Create the YAML files above with the correct credentials.
+2. Create the [YAML files described above](#files) with the correct credentials.
 3. If not connected yet, log in to the AWS CLI, which is necessary to retrieve one of the data points from an AWS Bucket.
 4. Run the `__main.py__` file inside the `python_scripts` directory with
    ```bash
@@ -105,9 +110,9 @@ To use, follow the following steps:
    ```
    or by running the python folder itself.
    ```bash
-   python python_scripts
+   python path/to/python_scripts
    ```
-5. Run all the scripts in the `sql_scripts` directory. This can be done by either manually running them one-by-one in the following order:
+5. Run all the scripts in the `sql_scripts/create_db_schema` directory. This can be done by either manually running them one-by-one in the following order:
    1. `cast_orders_table.sql`
    2. `cast_dim_users.sql`
    3. `cast_dim_store_details.sql`
@@ -124,21 +129,48 @@ To use, follow the following steps:
    ```
    or by running the `create_db_schema` folder itself.
    ```bash
-   python create_db_schema
+   python path/to/create_db_schema
    ```
 6. Finally, you can run any scripts in `sql_scripts/queries` to fetch relevant data.
+
+### Alterative ''master'' `__main__.py` file
+
+Alternatively to points `4.` and `5.`, you may either run the `__main__.py` file in the root directory of the project, or run the folder containing that file, instead. The top-level `__main__.py` file _(notated with an (*) in the below file structure)_ simply runs the two main files inside the `python_scripts` and `create_db_schema` directories in that order. E.g. if your file structure is
+
+```bash
+project_folder
+├── python_scripts
+│   └── __main__.py
+├── sql_scripts
+│   ├── create_db_schema
+│   │   └── __main__.py
+│   └── queries
+├── yaml_files
+└── __main__.py (*)
+```
+Then you may run:
+
+```bash
+python path/to/project_folder
+```
+
+or inside the `project_folder`:
+```bash
+python __main__.py
+```
 
 ## File structure
 
 ```bash
 .
 ├── python_scripts
+│   ├── __main__.py
 │   ├── data_cleaning.py
 │   ├── data_extraction.py
-│   ├── database_utils.py
-│   └── main.py
+│   └── database_utils.py
 ├── sql_scripts
 │   ├── create_db_schema
+│   │   ├── __main__.py
 │   │   ├── add_foreign_keys.sql
 │   │   ├── add_primary_keys.sql
 │   │   ├── add_weight_class_dim_products.sql
@@ -158,6 +190,11 @@ To use, follow the following steps:
 │       ├── total_sales_per_month.sql
 │       ├── total_sales_per_store_type_in_germany.sql
 │       └── total_sales_per_year_and_month.sql
+├── yaml_files
+│   ├── api_keys_template.yaml
+│   ├── db_creds.yaml
+│   └── loacal_db_creds_template.yaml
+├── __main__.py
 ├── .gitignore
 └── README.md
 ```

@@ -9,13 +9,9 @@ from data_extraction import DataExtractor
 
 if __name__ == '__main__':
 
-    # where the db_creds.yaml file is stored depends on whether we run this as a main file or by running the parent directory.
-    if os.path.exists('yaml_files'):
-        credentials_file = os.path.join('yaml_files', 'db_creds.yaml')
-    else:
-        credentials_file = os.path.join('..', 'yaml_files', 'db_creds.yaml')
-
-    #credentials_file = 'db_creds.yaml'
+    abspath = os.path.dirname(__file__)
+    credentials_file = os.path.join(abspath, '..', 'yaml_files','db_creds.yaml')
+    
     db_connector = DatabaseConnector(credentials_file)
     dex = DataExtractor()
     d_cleaner = DataCleaning()

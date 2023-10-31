@@ -100,10 +100,8 @@ class DataExtractor:
         df: pd.Dataframe
             The dataframe containing the stores data.
         '''
-        if os.path.exists('yaml_files'):
-            api_keys_path = os.path.join('yaml_files', 'api_keys.yaml')
-        else:
-            api_keys_path = os.path.join('..', 'yaml_files', 'api_keys.yaml')
+        abspath = os.path.dirname(__file__)
+        api_keys_path = os.path.join(abspath, '..', 'yaml_files','api_keys.yaml')
 
         with open(api_keys_path,'r') as stream:
             header = yaml.safe_load(stream)

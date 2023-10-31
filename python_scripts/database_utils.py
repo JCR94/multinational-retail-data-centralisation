@@ -82,10 +82,8 @@ class DatabaseConnector:
         table_name: str
             The name under which the table will be stored.
         '''
-        if os.path.exists('yaml_files'):
-            credentials_path = os.path.join('yaml_files','local_db_creds.yaml')
-        else:
-            credentials_path = os.path.join('..','yaml_files','local_db_creds.yaml')
+        abspath = os.path.dirname(__file__)
+        credentials_path = os.path.join(abspath, '..', 'yaml_files','local_db_creds.yaml')
         
         with open(credentials_path) as stream:
             credentials = yaml.safe_load(stream)
