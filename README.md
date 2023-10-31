@@ -28,9 +28,9 @@ The data can then be used to answer a variety of business questions to help the 
 
 The project can be divided into three main components:
 
-1. Extraction, cleaning, and uploading of data to database (handled by python scripts inside `python_scripts` directory).
-2. Casting data to appropriate data types within database, and add primary and foreign keys to create star-based schema (handled by sql scripts inside `create_db_schema` directory).
-3. Execute a variety of queries to obtain requested data (handled by sql scripts inside `queries` directory).
+1. Extraction, cleaning, and uploading of data to the database (handled by Python scripts inside the `python_scripts` directory).
+2. Casting data to appropriate data types within the database, and adding primary and foreign keys to create star-based schema (handled by SQL scripts inside the `create_db_schema` directory).
+3. Execute a variety of queries to obtain requested data (handled by SQL scripts inside the `queries` directory).
 
 ## Installation requirements
 
@@ -48,7 +48,7 @@ The following packages are required (we include the version numbers in parenthes
 - Boto3 (1.28.66)
 - AWS SDK for pandas (awswrangler) (3.4.1)
 - SQLAlchemy (2.0.22)
-- dateUtil (2.8.2)
+- dateutil (2.8.2)
 
 Inbuilt modules that were used but don't require explicit installation are:
 
@@ -133,7 +133,7 @@ To use the program, follow the following steps:
    ```
 6. Finally, you can run any scripts in `sql_scripts/queries` to fetch relevant data.
 
-### Alterative ''master'' `__main__.py` file
+### Alternative ''master'' `__main__.py` file
 
 Alternatively to points `4.` and `5.`, you may either run the `__main__.py` file in the root directory of the project, or run the folder containing that file, instead. The top-level `__main__.py` file _(notated with an (*) in the below file structure)_ simply runs the two main files inside the `python_scripts` and `create_db_schema` directories in that order. E.g. if your file structure is
 
