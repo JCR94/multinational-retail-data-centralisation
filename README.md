@@ -44,9 +44,9 @@ The project can be divided into three main components:
 
 ### Modules
 
-The project requires a version of Python (preferably Python 3). If working offline, it also requires some relational database management system on your PC. We recommend using PostgreSQL through pgAdmin 4.
+The project requires a version of Python (preferably Python 3) to be installed. It also requires some relational database management system. We recommend installing pgAdmin 4 as this was used during testing, and as we used PostgreSQL as our database system.
 
-The following packages are required (we include the version numbers in parentheses, but the exact version might not be required):
+The following 3<sup>rd</sup> party libraries are required (we include the version numbers in parentheses, but other versions may work too):
 
 - Pandas (2.1.1)
 - NumPy (1.26.0)
@@ -98,7 +98,7 @@ In addition to the files provided in the repo, the program requires the followin
    ```
    It is used to connect to the database you want to store all your retrieved and cleaned data in.
 
-These three files need to be in the `yaml_files` directory before executing the Python files. You may use the templates provided. Simply open them in your favorite editor, modify the details, and rename the files to remove the `_template` qualifier (e.g. rename `api_keys_template.yaml` to `api_key.yaml`).
+These three files need to be in the `yaml_files` directory before running any Python files. You may use the templates provided. Simply open them in your favorite editor, modify the details, and rename the files to remove the `_template` qualifier (e.g. rename `api_keys_template.yaml` to `api_key.yaml`).
 
 
 ## How to use
@@ -139,7 +139,7 @@ To use the program, follow the following steps:
 
 ### Alternative ''master'' main file
 
-Alternatively to points `4.` and `5.`, you may either run the `__main__.py` file in the root directory of the project, or run the folder containing that file, instead. The top-level `__main__.py` file _(notated with an (*) in the below file structure)_ simply runs the two main files inside the `python_scripts` and `create_db_schema` directories in that order. E.g. if your file structure is
+Alternatively to points `4.` and `5.`, you may either run the `__main__.py` file in the root directory of the project, or run the folder containing that file, instead. The top-level `__main__.py` file _(notated with an (*) in the file structure below)_ simply runs the two main files inside the `python_scripts` and `create_db_schema` directories in that order. E.g. if your file structure is
 
 ```bash
 project_folder
