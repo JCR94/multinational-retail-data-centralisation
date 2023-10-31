@@ -14,13 +14,23 @@ In this project, we simulate a working environment in which we work for a multin
 This project is part of the AICore immersive course in data engineering. The goal of this project is to extract data from multiple different sources, clean it, and collect it in a common database the make the data more accessible and readable by other team members.
 
 The data revolves around the retail of a variety of products, and is spread across five tables as follows:
-- dim_card_details
-- dim_date_times
-- dim_products
-- dim_users
-- orders_table
+- `dim_card_details`
+- `dim_date_times`
+- `dim_products`
+- `dim_users`
+- `orders_table`
+
+The data is stored in a star-based schema with the `orders_table` as the center.
+
+![EDR-image](https://images2.imgbox.com/08/47/vy4qWALs_o.png)
 
 The data can then be used to answer a variety of business questions to help the company make more data-driven decisions.
+
+The project can be divided into three main components:
+
+1. Extraction, cleaning, and uploading of data to database (handled by python scripts inside `python_scripts` directory).
+2. Casting data to appropriate data types within database, and add primary and foreign keys to create star-based schema (handled by sql scripts inside `create_db_schema` directory).
+3. Execute a variety of queries to obtain requested data (handled by sql scripts inside `queries` directory).
 
 ## Installation requirements
 
@@ -48,7 +58,7 @@ Inbuilt modules that were used but don't require explicit installation are:
 
 In addition to the files provided in the repo, the program requires the following YAML files:
 
-- api_keys.yaml
+- `api_keys.yaml`
 
    A YAML file of the form
    ```yaml
@@ -56,7 +66,7 @@ In addition to the files provided in the repo, the program requires the followin
    ```
    It is used to retrieve the store data from its database.
 
-- db_creds.yaml
+- `db_creds.yaml`
 
    A YAML file of the form
    ```yaml
@@ -68,7 +78,7 @@ In addition to the files provided in the repo, the program requires the followin
    ```
    It is used to connect to the RDS database to retrieve the user data.
    
-- local_db_creds.yaml
+- `local_db_creds.yaml`
 
    A YAML file of the form
    ```yaml
@@ -82,32 +92,28 @@ In addition to the files provided in the repo, the program requires the followin
    ```
    It is used to connect to the database you want to store all your retrieved and cleaned data in.
 
-These three files need to be in the yaml_files directory before executing the Python files. You may use the templates provided. Simply open them in your favorite editor, modify the details, and rename the files to remove the `_template` qualifier (e.g. rename `api_keys_template.yaml` to `api_key.yaml`)
+These three files need to be in the yaml_files directory before executing the Python files. You may use the templates provided. Simply open them in your favorite editor, modify the details, and rename the files to remove the `_template` qualifier (e.g. rename `api_keys_template.yaml` to `api_key.yaml`).
 
 To use, follow the following steps:
 
 1. Create a database (e.g. through pgAdmin 4).
 2. Create the YAML files above with the correct credentials.
 3. If not connected yet, log in to the AWS CLI, which is necessary to retrieve one of the data points from an AWS Bucket.
-4. Run the main.py file with
+4. Run the `__main.py__` file with
    ```bash
-   python main.py
+   python __main__.py
    ```
-5. Execute all the scripts in the sql_scripts directory.
+   or by running the python folder itself
+   ```bash
+   python python_scripts
+   ```
+5. Run all the scripts in the `sql_scripts` directory.
 
 ## File structure
 
 ```bash
 .
-├── __pycache__
-│   ├── data_cleaning.cpython-311.pyc
-│   ├── data_extraction.cpython-311.pyc
-│   └── database_utils.cpython-311.pyc
 ├── python_scripts
-│   ├── __pycache__
-│   │   ├── data_cleaning.cpython-311.pyc
-│   │   ├── data_extraction.cpython-311.pyc
-│   │   └── database_utils.cpython-311.pyc
 │   ├── data_cleaning.py
 │   ├── data_extraction.py
 │   ├── database_utils.py
