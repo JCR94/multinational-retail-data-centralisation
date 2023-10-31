@@ -99,7 +99,7 @@ class DataExtractor:
         df: pd.Dataframe
             The dataframe containing the stores data.
         '''
-        with open('api_keys.yaml','r') as stream:
+        with open('../yaml_files/api_keys.yaml','r') as stream:
             header = yaml.safe_load(stream)
         number_of_stores = self.list_number_of_stores('https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/number_stores', header)
 

@@ -27,7 +27,7 @@ class DatabaseConnector:
         '''
         Initialises the class by choosing a credentials file.
         '''
-        self.credentials_file = credentials_file
+        self.credentials_file = '../yaml_files/' + str(credentials_file)
 
     def read_db_creds(self):
         '''
@@ -83,7 +83,7 @@ class DatabaseConnector:
             The name under which the table will be stored.
         '''
         
-        with open('local_db_creds.yaml') as stream:
+        with open('../yaml_files/local_db_creds.yaml') as stream:
             credentials = yaml.safe_load(stream)
 
         HOST, USER, PASSWORD, DATABASE, PORT, DATABASE_TYPE, DBAPI = itemgetter('HOST', 'USER', 'PASSWORD', 'DATABASE', 'PORT', 'DATABASE_TYPE', 'DBAPI')(credentials)
