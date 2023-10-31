@@ -1,0 +1,7 @@
+HOST: hostname
+PASSWORD: password
+USER: username
+DATABASE: databasename
+PORT: 5432
+DATABASE_TYPE: postgresql
+DBAPI: psycopg2

@@ -1,8 +1,4 @@
-db_creds.yaml
-testNotebook.ipynb
-local_db_creds.yaml
-api_keys.yaml
-testFinalResults.ipynb
-card_details.pdf
-stores_data.csv
-bank_card_number_lenghts.yaml
+yaml_files/db_creds.yaml
+yaml_files/local_db_creds.yaml
+yaml_files/api_keys.yaml
+python_scripys/__pycache__

@@ -82,6 +82,8 @@ In addition to the files provided in the repo, the program requires the followin
    ```
    It is used to connect to the database you want to store all your retrieved and cleaned data in.
 
+These three files need to be in the yaml_files directory before executing the Python files. You may use the templates provided. Simply open them in your favorite editor, modify the details, and rename the files to remove the `_template` qualifier (e.g. rename `api_keys_template.yaml` to `api_key.yaml`)
+
 To use, follow the following steps:
 
 1. Create a database (e.g. through pgAdmin 4).
@@ -91,6 +93,7 @@ To use, follow the following steps:
    ```bash
    python main.py
    ```
+5. Execute all the scripts in the sql_scripts directory.
 
 ## File structure
 
@@ -99,7 +102,16 @@ To use, follow the following steps:
 ├── __pycache__
 │   ├── data_cleaning.cpython-311.pyc
 │   ├── data_extraction.cpython-311.pyc
-│   ├── database_utils.cpython-311.pyc
+│   └── database_utils.cpython-311.pyc
+├── python_scripts
+│   ├── __pycache__
+│   │   ├── data_cleaning.cpython-311.pyc
+│   │   ├── data_extraction.cpython-311.pyc
+│   │   └── database_utils.cpython-311.pyc
+│   ├── data_cleaning.py
+│   ├── data_extraction.py
+│   ├── database_utils.py
+│   └── main.py
 ├── sql_scripts
 │   ├── create_db_schema
 │   │   ├── add_foreign_keys.sql
@@ -122,12 +134,7 @@ To use, follow the following steps:
 │       ├── total_sales_per_store_type_in_germany.sql
 │       └── total_sales_per_year_and_month.sql
 ├── .gitignore
-├── data_cleaning.py
-├── data_extraction.py
-├── database_utils.py
-├── main.py
 └── README.md
-
 ```
 
 ## License Information
