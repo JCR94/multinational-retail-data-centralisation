@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 
 import yaml
@@ -5,7 +6,6 @@ import yaml
 from operator import itemgetter
 from sqlalchemy import create_engine
 from sqlalchemy import inspect
-
 
 class DatabaseConnector:
     '''
@@ -27,7 +27,7 @@ class DatabaseConnector:
         '''
         Initialises the class by choosing a credentials file.
         '''
-        self.credentials_file = '../yaml_files/' + str(credentials_file)
+        self.credentials_file =  credentials_file
 
     def read_db_creds(self):
         '''
@@ -82,8 +82,12 @@ class DatabaseConnector:
         table_name: str
             The name under which the table will be stored.
         '''
+        if os.path.exists('yaml_files'):
+            credentials_path = os.path.join('yaml_files','local_db_creds.yaml')
+        else:
+            credentials_path = os.path.join('..','yaml_files','local_db_creds.yaml')
         
-        with open('../yaml_files/local_db_creds.yaml') as stream:
+        with open(credentials_path) as stream:
             credentials = yaml.safe_load(stream)
 
         HOST, USER, PASSWORD, DATABASE, PORT, DATABASE_TYPE, DBAPI = itemgetter('HOST', 'USER', 'PASSWORD', 'DATABASE', 'PORT', 'DATABASE_TYPE', 'DBAPI')(credentials)

@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 
 import awswrangler as wr
@@ -99,7 +100,12 @@ class DataExtractor:
         df: pd.Dataframe
             The dataframe containing the stores data.
         '''
-        with open('../yaml_files/api_keys.yaml','r') as stream:
+        if os.path.exists('yaml_files'):
+            api_keys_path = os.path.join('yaml_files', 'api_keys.yaml')
+        else:
+            api_keys_path = os.path.join('..', 'yaml_files', 'api_keys.yaml')
+
+        with open(api_keys_path,'r') as stream:
             header = yaml.safe_load(stream)
         number_of_stores = self.list_number_of_stores('https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/number_stores', header)
 

@@ -99,15 +99,34 @@ To use, follow the following steps:
 1. Create a database (e.g. through pgAdmin 4).
 2. Create the YAML files above with the correct credentials.
 3. If not connected yet, log in to the AWS CLI, which is necessary to retrieve one of the data points from an AWS Bucket.
-4. Run the `__main.py__` file with
+4. Run the `__main.py__` file inside the `python_scripts` directory with
    ```bash
    python __main__.py
    ```
-   or by running the python folder itself
+   or by running the python folder itself.
    ```bash
    python python_scripts
    ```
-5. Run all the scripts in the `sql_scripts` directory.
+5. Run all the scripts in the `sql_scripts` directory. This can be done by either manually running them one-by-one in the following order:
+   1. `cast_orders_table.sql`
+   2. `cast_dim_users.sql`
+   3. `cast_dim_store_details.sql`
+   4. `add_weight_class_dim_products.sql`
+   5. `cast_dim_products.sql`
+   6. `cast_dim_date_times.sql`
+   7. `cast_dim_card_details.sql`
+   8. `add_primary_keys.sql`
+   9. `add_foreign_keys.sql`
+   
+   or by running the `__main.py__` file inside the `sql_scripts/create_db_schema` directory,
+   ```bash
+   python __main__.py
+   ```
+   or by running the `create_db_schema` folder itself.
+   ```bash
+   python create_db_schema
+   ```
+6. Finally, you can run any scripts in `sql_scripts/queries` to fetch relevant data.
 
 ## File structure
 
