@@ -1,3 +1,4 @@
+
 # Multinational Retail Data Centralisation
 
 In this project, we simulate a working environment in which we work for a multinational company that sells various goods across the globe.
@@ -5,8 +6,14 @@ In this project, we simulate a working environment in which we work for a multin
 ### Table of contents:
 - [Project description](#project-description)
 - [Installation requirements](#installation-requirements)
+   - [Modules](#modules)
+   - [Files](#files)
 - [How to use](#how-to-use)
+	- [Alternative ''master'' main file](#alternative-master-main-file)
 - [File structure](#file-structure)
+- [Languages and modules used](#languages-and-modules-used)
+   - [Languages](#languages)
+   - [Modules](#modules-1)
 - [License information](#license-information)
 
 ## Project description
@@ -50,11 +57,7 @@ The following packages are required (we include the version numbers in parenthes
 - SQLAlchemy (2.0.22)
 - dateutil (2.8.2)
 
-Inbuilt modules that were used but don't require explicit installation are:
-
-- RegEx (re) (2.2.1)
-- Operator
-- DateTime
+The full list of modules that were used can be found [here](#modules-1).
 
 ### Files
 
@@ -94,7 +97,7 @@ In addition to the files provided in the repo, the program requires the followin
    ```
    It is used to connect to the database you want to store all your retrieved and cleaned data in.
 
-These three files need to be in the yaml_files directory before executing the Python files. You may use the templates provided. Simply open them in your favorite editor, modify the details, and rename the files to remove the `_template` qualifier (e.g. rename `api_keys_template.yaml` to `api_key.yaml`).
+These three files need to be in the `yaml_files` directory before executing the Python files. You may use the templates provided. Simply open them in your favorite editor, modify the details, and rename the files to remove the `_template` qualifier (e.g. rename `api_keys_template.yaml` to `api_key.yaml`).
 
 
 ## How to use
@@ -108,11 +111,11 @@ To use the program, follow the following steps:
    ```bash
    python __main__.py
    ```
-   or by running the python folder itself.
+   or by running the `python` folder itself.
    ```bash
    python path/to/python_scripts
    ```
-5. Run all the scripts in the `sql_scripts/create_db_schema` directory. This can be done by either manually running them one-by-one in the following order:
+5. Run all the scripts in the `sql_scripts/create_db_schema` directory. This can be done by either manually running them one by one in the following order:
    1. `cast_orders_table.sql`
    2. `cast_dim_users.sql`
    3. `cast_dim_store_details.sql`
@@ -133,7 +136,7 @@ To use the program, follow the following steps:
    ```
 6. Finally, you can run any scripts in `sql_scripts/queries` to fetch relevant data.
 
-### Alternative ''master'' `__main__.py` file
+### Alternative ''master'' main file
 
 Alternatively to points `4.` and `5.`, you may either run the `__main__.py` file in the root directory of the project, or run the folder containing that file, instead. The top-level `__main__.py` file _(notated with an (*) in the below file structure)_ simply runs the two main files inside the `python_scripts` and `create_db_schema` directories in that order. E.g. if your file structure is
 
@@ -198,6 +201,28 @@ python __main__.py
 ├── .gitignore
 └── README.md
 ```
+
+## Languages and modules used
+
+### Languages
+- Python
+- PostgreSQL
+
+### Modules
+
+- OS
+- DateTime
+- Operator
+- RegEx (re) (2.2.1)
+- Pandas (2.1.1)
+- NumPy (1.26.0)
+- AWS SDK for pandas (awswrangler) (3.4.1)
+- Boto3 (1.28.66)
+- dateutil (2.8.2)
+- Requests (2.31.0)
+- SQLAlchemy (2.0.22)
+- Tabula (2.8.2)
+- YAML (6.0.1)
 
 ## License Information
 
