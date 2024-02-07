@@ -18,7 +18,7 @@ In this project, we simulate a working environment in which we work for a multin
 
 ## Project description
 
-This project is part of the AICore immersive course in data engineering. The goal of this project is to extract data from multiple different sources, clean it, and collect it in a common database the make the data more accessible and readable by other team members.
+This project is part of the AICore immersive course in data engineering. The goal of this project is to extract data from multiple different sources, clean it, and collect it in a common database to make the data more accessible and readable by other team members.
 
 The data revolves around the retail of a variety of products, and is spread across six tables as follows:
 - `dim_card_details`
